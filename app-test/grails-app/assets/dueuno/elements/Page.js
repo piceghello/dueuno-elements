@@ -38,18 +38,18 @@ class Page {
         Page.initializeControlValues($root, reinitialize);
     }
 
-    static finalizeContent($root, reinitialize = false) {
+    static finalizeContent($root, reinitialize = false, trigger = true) {
         // Do not change the sequence unless you know what you are doing
         PageStickyBox.finalize();
         PageTooltips.finalize();
-        Page.finalizeControls($root, reinitialize);
-        Page.finalizeComponents($root, reinitialize);
+        Page.finalizeControls($root, reinitialize, trigger);
+        Page.finalizeComponents($root, reinitialize, trigger);
         PageContent.finalize();
     }
 
-    static reinitializeContent($root, reinitialize = false, deactivate = false) {
+    static reinitializeContent($root, reinitialize = false, deactivate = false, trigger = true) {
         Page.initializeContent($root, reinitialize, deactivate);
-        Page.finalizeContent($root, reinitialize);
+        Page.finalizeContent($root, reinitialize, trigger);
         Page.triggerContentChange();
     }
 
@@ -146,7 +146,7 @@ class Page {
         }
     }
 
-    static finalizeComponents($root, reinitialize) {
+    static finalizeComponents($root, reinitialize, trigger = true) {
         let $elements = $root.find('[data-21-component]');
         for (let element of $elements) {
             let $element = $(element);
@@ -160,7 +160,7 @@ class Page {
             try {
                 if (Elements.hasMethod(component, 'finalize')) {
                     log.trace("FINALIZING COMPONENT '" + component.name + "'");
-                    Elements.callMethod($element, component, 'finalize', $root);
+                    Elements.callMethod($element, component, 'finalize', $root, trigger);
                 }
             } catch (e) {
                 log.error('Error finalizing component "' + component.name + '": ' + e);
@@ -199,7 +199,7 @@ class Page {
         }
     }
 
-    static finalizeControls($root, reinitialize) {
+    static finalizeControls($root, reinitialize, trigger = true) {
         let $elements = $root.find('[data-21-control]');
         for (let element of $elements) {
             let $element = $(element);
@@ -213,7 +213,7 @@ class Page {
             try {
                 if (Elements.hasMethod(control, 'finalize')) {
                     log.trace("FINALIZING CONTROL '" + control.name + "'");
-                    Elements.callMethod($element, control, 'finalize', $root);
+                    Elements.callMethod($element, control, 'finalize', $root, trigger);
                 }
             } catch (e) {
                 log.error('Error finalizing control "' + control.name + '": ' + e);

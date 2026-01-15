@@ -45,7 +45,7 @@ class PageModal extends Component {
     }
 
     static onClose(event) {
-        Page.reinitializeContent(PageContent.$self, false, true);
+        Page.reinitializeContent(PageContent.$self, false, true, false);
         PageModal.close();
     }
 
