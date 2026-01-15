@@ -60,7 +60,7 @@ class Select extends Control {
         $element.select2(initOptions);
     }
 
-    static finalize($element, $root) {
+    static finalize($element, $root, trigger) {
         $element.off('select2:select select2:unselect').on('select2:select select2:unselect', Select.onChange);
 
         // We need this to auto-focus the text input
@@ -71,7 +71,9 @@ class Select extends Control {
         let $selection = $element.next().find('.select2-selection__rendered');
         $selection.off('mouseenter').on('mouseenter', Select.onMouseEnter);
 
-        Transition.triggerEvent($element, 'load');
+        if (trigger) {
+            Transition.triggerEvent($element, 'load');
+        }
     }
 
     static deactivate($element) {
@@ -172,11 +174,22 @@ class Select extends Control {
         return $element.children('option').length;
     }
 
+    static getOptions($element) {
+        let $options = $element.children('option');
+        let options = [];
+
+        for (let option of $options) {
+            options.push({id: $(option).val(), text: $(option).html()})
+        }
+        return options;
+    }
+
     static setOptions($element, options) {
         let valueMap = Select.getValue($element);
+        let hasOptions = options && options.length;
 
         $element.empty();
-        if (!options || !options.length) {
+        if (!hasOptions) {
             valueMap.value = null;
             Select.setValue($element, valueMap, false);
             return;
